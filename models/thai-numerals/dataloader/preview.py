@@ -27,5 +27,5 @@ def main(path):
     torchvision.utils.save_image(grid, 'preview.png')
 
 if __name__ == '__main__':
-    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/data'
+    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/thai-numerals/dataloader/data'
     main(path)
