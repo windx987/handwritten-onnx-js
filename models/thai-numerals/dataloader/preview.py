@@ -13,7 +13,7 @@ def main(path):
             transforms.ToTensor(),
             transforms.Grayscale(),
             ReverseIntensity(),
-            transforms.Resize(32),
+            transforms.Resize(28),
             # transforms.Pad(32, fill=255, padding_mode='constant'),
             # transforms.RandomRotation(45),
             # transforms.CenterCrop(32),
@@ -23,6 +23,10 @@ def main(path):
     train_loader = DataLoader(dataset, batch_size=800, shuffle=True)
 
     inputs_batch, labels_batch = next(iter(train_loader))
+
+    for img in inputs_batch:
+        print(img.shape)
+
     grid = torchvision.utils.make_grid(inputs_batch, nrow=40, pad_value=1)
     torchvision.utils.save_image(grid, 'preview.png')
 

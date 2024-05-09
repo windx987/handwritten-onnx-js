@@ -24,7 +24,7 @@ class ReverseIntensity:
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.conv1 = nn.Conv2d(1, 32, 3, 2)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout2d(0.25)
         self.dropout2 = nn.Dropout2d(0.5)
@@ -115,7 +115,7 @@ def main():
             transforms.Grayscale(),
             transforms.ToTensor(),
             ReverseIntensity(),
-            transforms.Resize(32),
+            transforms.Resize(28),
             transforms.RandomAffine(degrees=30, translate=(0.5, 0.5), scale=(0.25, 1), shear=(-30, 30, -30, 30)),
             transforms.Normalize((0.1307,), (0.3081,))
     ])
