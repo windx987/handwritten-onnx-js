@@ -120,7 +120,7 @@ def main():
             transforms.Normalize((0.1307,), (0.3081,))
     ])
 
-    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/data'
+    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/thai-numerals/dataloader/data'
 
     dataset = ImageFolder(path, transform=transform)
     train_size = int(0.8 * len(dataset))
