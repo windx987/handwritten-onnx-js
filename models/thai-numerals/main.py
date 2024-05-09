@@ -28,9 +28,9 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout2d(0.25)
         self.dropout2 = nn.Dropout2d(0.5)
-        self.fc1 = nn.Linear(9216, 128)
+        self.fc1 = nn.Linear(64 * 5 * 5, 128)
         self.fc2 = nn.Linear(128, 10)
-
+    
     def forward(self, x):
         x = self.conv1(x)
         x = F.relu(x)
@@ -80,12 +80,12 @@ def test(args, model, device, test_loader):
         100. * correct / len(test_loader.dataset)))
 
 
-def main():
+def main(path):
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+    parser.add_argument('--batch-size', type=int, default=16, metavar='N',
                         help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
+    parser.add_argument('--test-batch-size', type=int, default=16, metavar='N',
                         help='input batch size for testing (default: 1000)')
     parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
@@ -113,14 +113,12 @@ def main():
 
     transform = transforms.Compose([
             transforms.Grayscale(),
+            transforms.Resize(28),
             transforms.ToTensor(),
             ReverseIntensity(),
-            transforms.Resize(28),
             transforms.RandomAffine(degrees=30, translate=(0.5, 0.5), scale=(0.25, 1), shear=(-30, 30, -30, 30)),
             transforms.Normalize((0.1307,), (0.3081,))
     ])
-
-    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/thai-numerals/dataloader/data'
 
     dataset = ImageFolder(path, transform=transform)
     train_size = int(0.8 * len(dataset))
@@ -143,4 +141,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/thai-numerals/dataloader/data'
+    main(path)
