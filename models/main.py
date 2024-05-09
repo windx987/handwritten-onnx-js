@@ -9,9 +9,17 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torchvision
+
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
+from torchvision.datasets import ImageFolder
+from torch.utils.data import DataLoader,Subset
+
+class ReverseIntensity:
+    def __call__(self, x):
+        return 1 - x
 
 class Net(nn.Module):
     def __init__(self):
@@ -102,24 +110,25 @@ def main():
     device = torch.device("cuda" if use_cuda else "cpu")
 
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
-    train_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('data', train=True, download=True,
-                       transform=transforms.Compose([
-                           # Add random transformations to the image.
-                           transforms.RandomAffine(
-                               degrees=30, translate=(0.5, 0.5), scale=(0.25, 1),
-                               shear=(-30, 30, -30, 30)),
 
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=args.batch_size, shuffle=True, **kwargs)
-    test_loader = torch.utils.data.DataLoader(
-        datasets.MNIST('data', train=False, transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=args.test_batch_size, shuffle=True, **kwargs)
+    transform = transforms.Compose([
+            transforms.Grayscale(),
+            transforms.ToTensor(),
+            ReverseIntensity(),
+            transforms.Resize(32),
+            transforms.RandomAffine(degrees=30, translate=(0.5, 0.5), scale=(0.25, 1), shear=(-30, 30, -30, 30)),
+            transforms.Normalize((0.1307,), (0.3081,))
+    ])
+
+    path = '/home/teerawat.c/projects/handwritten-onnx-js/models/data'
+
+    dataset = ImageFolder(path, transform=transform)
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
+
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, **kwargs)
+    test_loader = DataLoader(test_dataset, batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
     model = Net().to(device)
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
