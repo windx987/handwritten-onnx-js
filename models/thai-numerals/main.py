@@ -139,6 +139,8 @@ def main(path):
 
     torch.save(model.state_dict(), "pytorch_model.pt")
 
+    # settings ? ? ?asd
+
 
 if __name__ == '__main__':
     path = '/home/teerawat.c/projects/handwritten-onnx-js/models/thai-numerals/dataloader/data'
